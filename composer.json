@@ -32,6 +32,7 @@
         }
     ],
     "require": {
+        "intervention/image-laravel": "^1.5",
         "php": "^8.2"
     },
     "require-dev": {
