@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Config;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Illuminate\Support\Facades\File;
 
@@ -30,14 +30,26 @@ class WysiwygMediaUploadController extends BaseController {
         if (!File::isDirectory(Config::get('wysiwyg-media.media_folder'))) {
             File::makeDirectory(Config::get('wysiwyg-media.media_folder'), 0755, true);
         }
-      
-        // resize and save image
+
+        $image = Image::read($temporaryFile->path());
+        $resizedImage = $image->resize(Config::get('wysiwyg-media.maximum_image_width'));
+        $resizedImage->save($savedPath);
+
+      /*  $manager = new ImageManager();
+        // open an image file
+        $image = $manager->read($temporaryFile->path());
+        // resize image instance
+        $image->resize(Config::get('wysiwyg-media.maximum_image_width'));
+        // save encoded image
+        $encoded->save($savedPath);*/
+
+/*        // resize and save image
         Image::make($temporaryFile->path())
             ->resize(Config::get('wysiwyg-media.maximum_image_width'), null, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             })
-            ->save($savedPath);
+            ->save($savedPath);*/
 
         // optimize image
         OptimizerChainFactory::create()->optimize($savedPath);
